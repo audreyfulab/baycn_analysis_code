@@ -1,7 +1,7 @@
 library (BiDAG)
 library (networkBMA)
 
-load(data_geuvadis_pcs.RData)
+load('data_geuvadis_pcs.RData')
 
 # adjacency matrix for graphs with nine nodes.
 am_9 <- matrix(c(0, 1, 1, 1, 1, 1, 1, 1, 1,

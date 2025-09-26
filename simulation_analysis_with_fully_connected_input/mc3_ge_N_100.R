@@ -1,7 +1,41 @@
-library (parental,
-         )
-library (structmcmc,
-         )
+#install.packages("remotes")
+#remotes::install_github("rjbgoudie/parental")
+#remotes::install_github("rjbgoudie/structmcmc")
+
+# structmcmc calls .Internal(crossprod(...))
+# Since R ≥4.3 made crossprod() a primitive instead of an .Internal, any such call now fails
+# 
+# Need the following patch:
+#
+# patch_crossprod_calls <- function(pkg){
+#   ns <- asNamespace(pkg)
+#   fixed <- character()
+#   for (fname in ls(ns, all.names = TRUE)){
+#     f <- get(fname, envir = ns, inherits = FALSE)
+#     if (!is.function(f)) next
+#     bod <- paste(deparse(body(f)), collapse = "\n")
+#     if (!grepl("\\.Internal\\(\\s*crossprod\\s*\\(", bod)) next
+#     
+#     bod2 <- bod
+#     bod2 <- gsub("\\.Internal\\(\\s*crossprod\\s*\\(([^,\\)]+),\\s*NULL\\s*\\)\\)", "base::crossprod(\\1)", bod2)
+#     bod2 <- gsub("\\.Internal\\(\\s*crossprod\\s*\\(([^\\)]+)\\)\\)", "base::crossprod(\\1)", bod2)
+#     
+#     # apply patch
+#     f2 <- f
+#     body(f2) <- parse(text = bod2)[[1]]
+#     unlockBinding(fname, ns); assign(fname, f2, envir = ns); lockBinding(fname, ns)
+#     fixed <- c(fixed, paste(pkg, fname, sep="::"))
+#   }
+#   fixed
+# }
+# 
+# fixed <- c(patch_crossprod_calls("parental"),
+#            patch_crossprod_calls("structmcmc"))
+# fixed
+
+
+library (parental)
+library (structmcmc)
 
 load('./data_ge_N_100.RData')
 
