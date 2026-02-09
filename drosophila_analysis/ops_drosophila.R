@@ -144,13 +144,14 @@ scan_posterior <- am_bma(scan_discrete)
 # BCDAG requires continuous data
 # and is a stretch for the mixed drosophila data
 library (BCDAG)
-q <- ncol(drosophila_continuous)
-bcdag_discrete = learn_DAG(S = 50000, burn = 10000, a = q, U = diag(1,q)/n, data = drosophila_continuous, w = 0.05,
+q <- ncol(drosophila$continuous)
+n <- nrow(drosophila$continuous)
+bcdag_discrete = learn_DAG(S = 50000, burn = 10000, a = q, U = diag(1,q)/n, data = drosophila$continuous, w = 0.05,
                            fast = FALSE, save.memory = FALSE, collapse = TRUE)
 # extract the posterior adjacency matrix
 bcdag_discrete_adjmtx <- get_edgeprobs(bcdag_discrete)
-colnames(bcdag_discrete_adjmtx) <- colnames(drosophila_continuous)
-rownames(bcdag_discrete_adjmtx) <- colnames(drosophila_continuous)
+colnames(bcdag_discrete_adjmtx) <- colnames(drosophila$continuous)
+rownames(bcdag_discrete_adjmtx) <- colnames(drosophila$continuous)
 
 write.table(bcdag_discrete_adjmtx, "bcdag_drosophila_adj_mtx.txt", col.names = TRUE, row.names = TRUE, sep = "\t", quote = FALSE)
 

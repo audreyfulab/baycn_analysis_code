@@ -4,7 +4,6 @@ setwd("~/Documents/Programs/baycn_analysis_code/drosophila_analysis")
 load('data_drosophila_tissue.RData')
 
 # Adjacency matrices -----------------------------------------------------------
-
 am_dros <- matrix(c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,

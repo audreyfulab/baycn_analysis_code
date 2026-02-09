@@ -1,7 +1,5 @@
-library (baycn,
-         lib = '/mnt/lfs2/mart9986/Rpackages/')
+library (baycn)
 
-#load('/mnt/lfs2/mart9986/data/data_geuvadis_pcs.RData')
 load('data_geuvadis_pcs.RData')
 
 # Adjacency matrices -----------------------------------------------------------
@@ -94,18 +92,53 @@ bay_Q50_pc <- mhEdge(adjMatrix = am_5,
 bay_Q8_pc <- mhEdge(adjMatrix = am_9,
                     burnIn = 0.2,
                     data = data_Q8_pc,
-                    iterations = 50000,
+                    iterations = 500000,
                     nGV = 1,
                     pmr = TRUE,
                     prior = c(0.05,
                               0.05,
                               0.9),
                     progress = TRUE,
-                    thinTo = 200)
+                    thinTo = 1000)
+
+q8_baycn_500k_1k_1 <- bay_Q8_pc@posteriorES
+
+bay_Q8_pc <- mhEdge(adjMatrix = am_9,
+                    burnIn = 0.2,
+                    data = data_Q8_pc,
+                    iterations = 500000,
+                    nGV = 1,
+                    pmr = TRUE,
+                    prior = c(0.05,
+                              0.05,
+                              0.9),
+                    progress = TRUE,
+                    thinTo = 1000)
+q8_baycn_500k_1k_2 <- bay_Q8_pc@posteriorES
+
+bay_Q8_pc <- mhEdge(adjMatrix = am_9,
+                    burnIn = 0.2,
+                    data = data_Q8_pc,
+                    iterations = 500000,
+                    nGV = 1,
+                    pmr = TRUE,
+                    prior = c(0.05,
+                              0.05,
+                              0.9),
+                    progress = TRUE,
+                    thinTo = 1000)
+q8_baycn_500k_1k_3 <- bay_Q8_pc@posteriorES
+
+q8_baycn_500k_1k_merged <- q8_baycn_500k_1k_1
+q8_baycn_500k_1k_merged$zero <- (q8_baycn_500k_1k_1$zero + q8_baycn_500k_1k_2$zero + q8_baycn_500k_1k_3$zero)/3
+q8_baycn_500k_1k_merged$one <- (q8_baycn_500k_1k_1$one + q8_baycn_500k_1k_2$one + q8_baycn_500k_1k_3$one)/3
+q8_baycn_500k_1k_merged$two <- (q8_baycn_500k_1k_1$two + q8_baycn_500k_1k_2$two + q8_baycn_500k_1k_3$two)/3
 
 save(bay_Q21_pc,
      bay_Q23_pc,
      bay_Q37_pc,
      bay_Q50_pc,
      bay_Q8_pc,
-     file = '/mnt/lfs2/mart9986/baycn/bay_geuvadis_pcs.RData')
+     file = 'bay_geuvadis_pcs.RData')
+
+write.table(q8_baycn_500k_1k_merged, "q8_baycn_500k_1k_merged_posteriorES.txt", quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)

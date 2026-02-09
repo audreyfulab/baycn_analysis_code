@@ -73,7 +73,8 @@ plot_with_SD_bars <- function(data, xvar, yvar, xsdvar, ysdvar,
 old_par <- par(no.readonly = TRUE)
 on.exit(par(old_par))
 
-pdf("Plot_power_precision_g2_nc11_pc.pdf")
+#pdf("Plot_power_precision_g2_nc11_pc.pdf")
+svg("Plot_power_precision_g2_nc11_pc.svg")
 par(mar = c(3.5, 3.5, 0.5, 0.5), mgp = c(2, 0.5, 0))
 par(mfrow=c(3,3))
 

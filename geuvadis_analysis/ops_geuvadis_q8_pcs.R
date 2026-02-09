@@ -38,30 +38,41 @@ score_q8_pcs <- scoreparameters('bge',
 
 set.seed(1)
 
+# Set MCMC iterations and step sizes
+niter.long <- 500000
+burn.in <- 0.2
+nsamples <- 1000
+
+stepsize.long <- niter.long*(1-burn.in) / nsamples
+
+
 # Run partition MCMC for the same number of iterations as baycn.
-partition_q8_pcs <- partitionMCMC(iterations = 50000,
+partition_q8_pcs <- partitionMCMC(iterations = niter.long,
                                   startspace = am_9,
                                   scorepar = score_q8_pcs,
                                   blacklist = blacklist,
+                                  stepsave = stepsize.long,
                                   verbose = TRUE)
 
 # Calculate the posterior probability adjacency matrix.
 partition_posterior <- edgep(partition_q8_pcs,
-                             burnin = 0.2)
+                             burnin = burn.in)
 
 set.seed(2)
 
 # Run order MCMC for the same number of iterations as baycn.
-order_q8_pcs <- orderMCMC(iterations = 50000,
+order_q8_pcs <- orderMCMC(iterations = niter.long,
                           startspace = am_9,
                           scorepar = score_q8_pcs,
                           blacklist = blacklist,
+                          stepsave = stepsize.long,
                           chainout = TRUE,
+                          MAP = FALSE,
                           verbose = TRUE)
 
 # Calculate the posterior probability adjacency matrix.
 order_posterior <- edgep(order_q8_pcs,
-                         burnin = 0.2)
+                         burnin = burn.in)
 
 # scanBMA helper functions -----------------------------------------------------
 
@@ -142,10 +153,16 @@ scan_posterior[2:9, 1] <- 0
 # Run BCDAG -----------------------------------------------------
 library (BCDAG)
 q <- ncol(data_Q8_pc)
-bcdag_q8 = learn_DAG(S = 50000, burn = 10000, a = q, U = diag(1,q)/n, data = data_Q8_pc, w = 0.05,
+n <- nrow(data_Q8_pc)
+S_q8 <- 5e5
+burn_q8 <- S_q8 * 0.2
+thinned_indices<- seq(from=burn_q8+1, to=S_q8, length.out=1000)
+
+bcdag_q8 = learn_DAG(S = S_q8, burn = burn_q8, a = q, U = diag(1,q)/n, data = data_Q8_pc, w = 0.05,
                            fast = FALSE, save.memory = FALSE, collapse = TRUE)
 # extract the posterior adjacency matrix
-bcdag_q8_adjmtx <- get_edgeprobs(bcdag_q8)
+bcdag_thinned <- bcdag_q8$Graphs[,,thinned_indices]
+bcdag_q8_adjmtx <- apply(bcdag_thinned, c(1, 2), mean)
 colnames(bcdag_q8_adjmtx) <- colnames(data_Q8_pc)
 rownames(bcdag_q8_adjmtx) <- colnames(data_Q8_pc)
 
