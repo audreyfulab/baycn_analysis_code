@@ -24,6 +24,10 @@ The baycn package is available at https://github.com/evanamartin/baycn.
   - What it does: Same as above, but the initial graph is fully connected.
     This highlights how baycn behaves with minimal knowledge of the graph topology.
 
+- thinning/ 
+
+  - Goal: Thin the MCMC samples from other methods such that these methods use the same MCMC settings as baycn.
+    
 - geuvadis_analysis/
 
   - Goal: Apply baycn to the GEUVADIS data of gene expression and genotypes in humans.
